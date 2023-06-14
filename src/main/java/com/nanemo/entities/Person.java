@@ -8,6 +8,7 @@ import org.hibernate.annotations.CascadeType;
 import javax.validation.constraints.NotEmpty;
 import javax.validation.constraints.Size;
 import java.time.LocalDateTime;
+import java.util.Date;
 import java.util.List;
 
 @Getter
@@ -30,7 +31,7 @@ public class Person {
 
     @Column(name = "birth_date")
     @Temporal(TemporalType.TIMESTAMP)
-    private LocalDateTime birthdate;
+    private Date birthdate;
 
     @OneToMany(mappedBy = "personName")
     @Cascade({CascadeType.SAVE_UPDATE,

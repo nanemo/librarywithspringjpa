@@ -6,6 +6,7 @@ import lombok.*;
 import javax.validation.constraints.NotEmpty;
 import javax.validation.constraints.Size;
 import java.time.LocalDateTime;
+import java.util.Date;
 
 @Getter
 @Setter
@@ -36,7 +37,7 @@ public class Book {
 
     @Column(name = "taken_at")
     @Temporal(TemporalType.TIMESTAMP)
-    private LocalDateTime takenAt;
+    private Date takenAt;
 
     @Transient
     private boolean expired;
