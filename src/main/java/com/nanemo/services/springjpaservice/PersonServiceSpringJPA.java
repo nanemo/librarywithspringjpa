@@ -33,4 +33,7 @@ public class PersonServiceSpringJPA {
         bookRepository.deleteBookFromPersonList(bookId);
     }
 
+    public Optional<Person> getPersonByName(String name) {
+        return personRepository.findByName(name);
+    }
 }

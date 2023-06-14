@@ -21,8 +21,8 @@
         </thead>
         <tbody>
         <tr th:each="book : ${free_books}">
-            <td th:text="${book.bookName}"></td>
-            <td th:text="${book.authorName}"></td>
+            <td th:text="${book.getTitle}"></td>
+            <td th:text="${book.getAuthor}"></td>
             <td th:text="${book.getBirthday}"></td>
 
             <td>

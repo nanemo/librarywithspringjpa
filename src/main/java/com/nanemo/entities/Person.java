@@ -1,9 +1,6 @@
 package com.nanemo.entities;
 
-import jakarta.persistence.Column;
-import jakarta.persistence.OneToMany;
-import jakarta.persistence.Temporal;
-import jakarta.persistence.TemporalType;
+import jakarta.persistence.*;
 import lombok.*;
 import org.hibernate.annotations.Cascade;
 import org.hibernate.annotations.CascadeType;
@@ -18,8 +15,13 @@ import java.util.List;
 @AllArgsConstructor
 @NoArgsConstructor
 @Builder
+@Entity
+@Table(name = "people")
 public class Person {
 
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Column(name = "person_id")
     private Integer personId;
 
     @NotEmpty(message = "Release date can't be empty!")
@@ -32,7 +34,6 @@ public class Person {
 
     @OneToMany(mappedBy = "personName")
     @Cascade({CascadeType.SAVE_UPDATE,
-            CascadeType.DELETE,
             CascadeType.REFRESH})
     private List<Book> bookList;
 }

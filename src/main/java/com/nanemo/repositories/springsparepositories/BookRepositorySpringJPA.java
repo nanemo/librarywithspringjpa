@@ -10,4 +10,6 @@ import java.util.List;
 public interface BookRepositorySpringJPA extends JpaRepository<Book, Integer> {
 
     List<Book> findAllByOrderByBookIdAsc();
+
+    List<Book> findByTitleStartingWith(String title);
 }

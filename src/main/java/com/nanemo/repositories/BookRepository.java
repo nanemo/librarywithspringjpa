@@ -32,14 +32,14 @@ public class BookRepository implements AbstractRepository<Book> {
 
     @Override
     public void create(Book book) {
-        jdbcTemplate.update("INSERT INTO Book (book_name, author_name, birthday) VALUES (?,?,?)", book.getBookName(), book.getAuthorName(), book.getBirthday());
+        jdbcTemplate.update("INSERT INTO Book (book_name, author_name, birthday) VALUES (?,?,?)", book.getTitle(), book.getAuthor(), book.getBirthday());
     }
 
     @Override
     public void update(Book book, Integer id) {
         jdbcTemplate.update("UPDATE Book SET book_name=?, author_name=?, birthday=? WHERE book_id=?",
-                book.getBookName(),
-                book.getAuthorName(),
+                book.getTitle(),
+                book.getAuthor(),
                 book.getBirthday(),
                 id);
     }

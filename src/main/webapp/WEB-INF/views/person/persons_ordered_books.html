@@ -38,8 +38,8 @@
             </thead>
             <tbody>
             <tr th:each="book : ${person.getBookList()}">
-                <td th:text="${book.bookName}"></td>
-                <td th:text="${book.authorName}"></td>
+                <td th:text="${book.getTitle}"></td>
+                <td th:text="${book.getAuthor}"></td>
                 <td th:text="${book.getBirthday}"></td>
                 <td>
                     <form th:action="@{/book/delete_book_from_person_list/{person_id}/{book_id}/(person_id=${person.personId},
