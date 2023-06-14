@@ -3,64 +3,86 @@ package com.nanemo.services;
 import com.nanemo.entities.Book;
 import com.nanemo.entities.Person;
 import com.nanemo.repositories.PersonRepository;
+import org.hibernate.Hibernate;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
-import java.util.List;
-import java.util.Optional;
+import java.util.*;
 
 @Service
+@Transactional(readOnly = true)
 public class PersonService {
-    PersonRepository personRepository;
+    private final PersonRepository personRepository;
 
     @Autowired
     public PersonService(PersonRepository personRepository) {
         this.personRepository = personRepository;
     }
 
-    public List<Person> getPeople() {
-        return personRepository.getAll();
+    public List<Person> findAll() {
+        return personRepository.findAll();
     }
 
-    public Person getPersonById(Integer personId) {
-        return personRepository.getById(personId);
+    public Person findById(Integer personId) {
+        Optional<Person> personById = personRepository.findById(personId);
+        return personById.orElse(null);
     }
 
-    public void createPerson(Person person) {
-        personRepository.create(person);
+    @Transactional
+    public void save(Person person) {
+        personRepository.save(person);
     }
 
-    public void updatePerson(Person person, Integer personId) {
-        Person trimmedPerson = trimPersonFields(person);
-        personRepository.update(trimmedPerson, personId);
+    @Transactional
+    public void update(Integer personId, Person newPerson) {
+        newPerson.setPersonId(personId);
+        personRepository.save(newPerson);
     }
 
-    private Person trimPersonFields(Person person) {
-        Person newPerson = new Person();
-        newPerson.setPersonId(person.getPersonId());
-        newPerson.setName(person.getName().trim());
-        newPerson.setBirthday(person.getBirthday().trim());
-        return newPerson;
-    }
-
-    public void deletePerson(Integer personId) {
-        personRepository.delete(personId);
-    }
-
-    public Person getPersonWithOrderedBookList(Integer personId) {
-        Person person = personRepository.getById(personId);
-        person.setBookList(personRepository.getPersonOrderedBookList(personId));
-
-        return person;
-    }
-
-    public List<Book> getFreeBookLists(Integer personId) {
-        return personRepository.getFreeBookLists(personId);
+    @Transactional
+    public void delete(Integer personId) {
+        personRepository.deleteById(personId);
     }
 
     public Optional<Person> getPersonByName(String name) {
-        return personRepository.getPersonByName(name);
+        return personRepository.findByName(name);
     }
 
+    public List<Book> getBooksByPersonId(Integer personId) {
+        Optional<Person> personById = personRepository.findById(personId);
+
+        if (personById.isPresent()) {
+            Hibernate.initialize(personById.get().getBookList());
+            personById.get().getBookList().forEach(book -> {
+                long diffInMil = Math.abs(book.getTakenAt().getTime() - new Date().getTime());
+
+                if (diffInMil > 864000000) {
+                    book.setExpired(true);
+                }
+            });
+            return personById.get().getBookList();
+        } else {
+            return Collections.emptyList();
+        }
+    }
+
+
+
+
+//    public void addBookToPersonBalance(Integer personId, Integer bookId) {
+//
+//        Optional<Book> bookById = bookRepository.findById(bookId);
+//        Optional<Person> personById = personRepository.findById(personId);
+//        if (bookById.isPresent() && personById.isPresent() && Objects.isNull(bookById.get().getPersonName())) {
+//            personById.get().setBookList();
+//        }
+//
+//        bookRepository.addBookToPersonBalance(personId, bookId);
+//    }
+//
+//    public void deleteBookFromPersonList(Integer bookId) {
+//        bookRepository.deleteBookFromPersonList(bookId);
+//    }
 
 }

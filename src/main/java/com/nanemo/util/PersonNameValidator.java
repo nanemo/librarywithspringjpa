@@ -1,7 +1,7 @@
 package com.nanemo.util;
 
 import com.nanemo.entities.Person;
-import com.nanemo.services.springjpaservice.PersonServiceSpringJPA;
+import com.nanemo.services.PersonService;
 import org.springframework.stereotype.Component;
 import org.springframework.validation.Errors;
 import org.springframework.validation.Validator;
@@ -9,9 +9,9 @@ import org.springframework.validation.Validator;
 @Component
 public class PersonNameValidator implements Validator {
 
-    private final PersonServiceSpringJPA personService;
+    private final PersonService personService;
 
-    public PersonNameValidator(PersonServiceSpringJPA personService) {
+    public PersonNameValidator(PersonService personService) {
         this.personService = personService;
     }
 

@@ -17,40 +17,30 @@ import javax.validation.Valid;
 public class PersonController {
     private final PersonService personService;
     private final PersonNameValidator personNameValidator;
-    private final DateValidator dateValidator;
 
     @Autowired
-    public PersonController(PersonService personService, PersonNameValidator personNameValidator, DateValidator dateValidator) {
+    public PersonController(PersonService personService, PersonNameValidator personNameValidator) {
         this.personService = personService;
         this.personNameValidator = personNameValidator;
-        this.dateValidator = dateValidator;
     }
 
     @GetMapping("/all")
     public String getPeople(Model model) {
-        model.addAttribute("people", personService.getPeople());
+        model.addAttribute("people", personService.findAll());
         return "person/person_list";
     }
 
-    @GetMapping("/ordered_book/{person_id}")
+    @GetMapping("/{person_id}")
     public String listOfOrderedBooks(Model model,
                                      @PathVariable("person_id") Integer personId) {
-        model.addAttribute("person", personService.getPersonWithOrderedBookList(personId));
+        model.addAttribute("person", personService.findById(personId));
+        model.addAttribute("books", personService.getBooksByPersonId(personId));
+
         return "person/persons_ordered_books";
     }
 
-    @GetMapping("/free_book/{person_id}")
-    public String getFreeBookLists(Model model,
-                                   @PathVariable("person_id") Integer personId) {
-        model.addAttribute("free_books", personService.getFreeBookLists(personId));
-        model.addAttribute("current_person_id", personId);
-
-        return "book/free_books";
-    }
-
     @GetMapping("/before_create")
-    public String beforeCreate(Model model) {
-        model.addAttribute("person", new Person());
+    public String beforeCreate(@ModelAttribute Person person) {
         return "person/create_person";
     }
 
@@ -63,14 +53,14 @@ public class PersonController {
             return "person/create_person";
         }
 
-        personService.createPerson(person);
+        personService.save(person);
         return "redirect:/person/all";
     }
 
     @GetMapping("/before_update/{person_id}")
     public String beforeUpdate(Model model,
                                @PathVariable("person_id") Integer personId) {
-        model.addAttribute("person", personService.getPersonById(personId));
+        model.addAttribute("person", personService.findById(personId));
         return "person/update_person";
     }
 
@@ -80,22 +70,21 @@ public class PersonController {
                                @PathVariable("person_id") Integer personId) {
         person.setPersonId(personId);
 
-        if (!person.getName().equals(personService.getPersonById(personId).getName())) {
+        if (!person.getName().equals(personService.findById(personId).getName())) {
             personNameValidator.validate(person, bindingResult);
         }
 
-        dateValidator.validate(person, bindingResult);
         if (bindingResult.hasErrors()) {
             return "person/update_person";
         }
 
-        personService.updatePerson(person, personId);
+        personService.update(personId, person);
         return "redirect:/person/all";
     }
 
     @DeleteMapping("/delete/{person_id}")
     public String deletePerson(@PathVariable("person_id") Integer personId) {
-        personService.deletePerson(personId);
+        personService.delete(personId);
         return "redirect:/person/all";
     }
 

@@ -3,44 +3,77 @@ package com.nanemo.services;
 import com.nanemo.entities.Book;
 import com.nanemo.repositories.BookRepository;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Sort;
+import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
+import org.springframework.web.server.ResponseStatusException;
 
 import java.util.List;
+import java.util.Optional;
 
 @Service
+@Transactional(readOnly = true)
 public class BookService {
-    BookRepository bookRepository;
+    private final BookRepository bookRepository;
 
     @Autowired
     public BookService(BookRepository bookRepository) {
         this.bookRepository = bookRepository;
     }
 
-    public List<Book> getAllBooks(){
-        return bookRepository.getAll();
+    public List<Book> findAll(Boolean sortByYear) {
+        if (sortByYear)
+            return bookRepository.findAll(Sort.by("year"));
+        else
+            return bookRepository.findAll();
     }
 
-    public Book getBookById(Integer id){
-        return bookRepository.getById(id);
+    public List<Book> findWithPagination(Integer page, Integer booksPerPage, Boolean sortByYear) {
+        if (sortByYear)
+            return bookRepository.findAll(PageRequest.of(page, booksPerPage, Sort.by("year"))).getContent();
+        else
+            return bookRepository.findAll(PageRequest.of(page, booksPerPage)).getContent();
     }
 
-    public void createBook(Book book){
-        bookRepository.create(book);
+    public Book findBookById(Integer bookId) {
+        return bookRepository.findById(bookId).orElse(null);
     }
 
-    public void updateBook(Book book, Integer id){
-        bookRepository.update(book, id);
+    public void saveBook(Book book) {
+        if (isNewBookEmpty(book)
+                || book.getTitle().isEmpty()
+                || book.getAuthor().isEmpty()
+                || book.getTakenAt() == null) {
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, BAD_REQUEST_MESSAGE);
+        }
+        bookRepository.save(book);
     }
 
-    public void deleteBook(Integer id){
-        bookRepository.delete(id);
+    private boolean isNewBookEmpty(Book book) {
+        return book.getTitle() == null &&
+                book.getAuthor() == null &&
+                book.getTakenAt() == null &&
+                book.getPersonName() == null;
     }
 
-    public void addBookToPersonBalance(Integer personId, Integer bookId) {
-        bookRepository.addBookToPersonBalance(personId, bookId);
+    public void updateBook(Book newBook, Integer id) {
+        Optional<Book> bookById = bookRepository.findById(id);
+        bookById.ifPresent(bookFromData -> {
+            bookFromData.setTitle(newBook.getTitle() != null ? newBook.getTitle() : bookFromData.getTitle());
+            bookFromData.setAuthor(newBook.getAuthor() != null ? newBook.getAuthor() : bookFromData.getAuthor());
+            bookFromData.setTakenAt(newBook.getTakenAt() != null ? newBook.getTakenAt() : bookFromData.getTakenAt());
+
+            bookRepository.save(bookFromData);
+        });
+
     }
 
-    public void deleteBookFromPersonList(Integer bookId) {
-        bookRepository.deleteBookFromPersonList(bookId);
+    public void deleteBook(Integer id) {
+        if (bookRepository.findById(id).isPresent()) {
+            bookRepository.deleteById(id);
+        }
     }
+
 }
