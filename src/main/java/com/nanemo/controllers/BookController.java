@@ -1,12 +1,12 @@
 package com.nanemo.controllers;
 
 import com.nanemo.entities.Book;
+import com.nanemo.entities.Person;
 import com.nanemo.services.BookService;
 import com.nanemo.services.PersonService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
-import org.springframework.ui.ModelMap;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
 
@@ -38,45 +38,42 @@ public class BookController {
         return "book/book_list";
     }
 
+    @GetMapping("/{id}")
+    public String getBookById(@PathVariable("id") Integer bookId,
+                              Model model,
+                              @ModelAttribute("person") Person person) {
+        model.addAttribute("book", bookService.findBookById(bookId));
+
+        Person bookOwner = bookService.getBookOwner(bookId);
+
+        if (bookOwner != null)
+            model.addAttribute("owner", bookOwner);
+        else
+            model.addAttribute("people", personService.findAll());
+
+        return "book/show";
+    }
+
     @GetMapping("/new")
-    public String newBook(Model model) {
-        model.addAttribute("book", new Book());
+    public String newBook(@ModelAttribute("book") @Valid Book book) {
         return "book/new";
     }
 
     @PostMapping("/create")
     public String createBook(@ModelAttribute("book") @Valid Book book,
                              BindingResult bindingResult) {
-        dateValidator.validate(book, bindingResult);
-
         if (bindingResult.hasErrors()) {
             return "book/new";
         }
 
-        bookService.createBook(book);
+        bookService.saveBook(book);
         return "redirect:/book/all";
-    }
-
-    @PostMapping("/add_book_to_person/{person_id}/{book_id}")
-    public String addBookToPersonBalance(@PathVariable("person_id") Integer personId,
-                                         @PathVariable("book_id") Integer bookId) {
-        bookService.addBookToPersonBalance(personId, bookId);
-        return "redirect:/person/free_book/" + personId;
-    }
-
-    @PostMapping("/delete_book_from_person_list/{person_id}/{book_id}")
-    public String deleteBookFromPersonList(ModelMap modelMap,
-                                           @PathVariable("person_id") Integer personId,
-                                           @PathVariable("book_id") Integer bookId) {
-        bookService.deleteBookFromPersonList(bookId);
-        modelMap.addAttribute("person", personService.getPersonWithOrderedBookList(personId));
-        return "person/persons_ordered_books";
     }
 
     @GetMapping("/before_update/{book_id}")
     public String beforeUpdateBook(Model model,
                                    @PathVariable("book_id") Integer bookId) {
-        model.addAttribute("book", bookService.getBookById(bookId));
+        model.addAttribute("book", bookService.findBookById(bookId));
         return "book/update";
     }
 
@@ -84,7 +81,6 @@ public class BookController {
     public String updateBook(@ModelAttribute("book") @Valid Book book,
                              BindingResult bindingResult,
                              @PathVariable("book_id") Integer bookId) {
-        dateValidator.validate(book, bindingResult);
 
         if (bindingResult.hasErrors()) {
             return "book/update";
@@ -98,6 +94,32 @@ public class BookController {
     public String deleteBook(@PathVariable("book_id") Integer bookId) {
         bookService.deleteBook(bookId);
         return "redirect:/book/all";
+    }
+
+    @PatchMapping("/release/{id}")
+    public String release(@PathVariable("id") Integer bookId) {
+        bookService.release(bookId);
+
+        return "redirect:/book/" + bookId;
+    }
+
+    @PatchMapping("/assign/{id}")
+    public String assign(@PathVariable("id") Integer bookId, @ModelAttribute("person") Person selectedPerson) {
+        // For selectedPerson init just id another fields are null
+        bookService.assign(bookId, selectedPerson);
+
+        return "redirect:/book/" + bookId;
+    }
+
+    @GetMapping("/search")
+    public String searchPage(){
+        return "book/search";
+    }
+
+    @PostMapping("/search")
+    public String makeSearch(Model model, @RequestParam("query") String query) {
+        model.addAttribute("books", bookService.searchByTitle(query));
+        return "book/search";
     }
 
 }

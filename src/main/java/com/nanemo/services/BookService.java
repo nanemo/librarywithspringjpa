@@ -50,7 +50,7 @@ public class BookService {
         Book bookById = bookRepository.findById(id).get();
 
         newBook.setBookId(id);
-        newBook.setOwner(bookById.getOwner());
+        newBook.setOwner(bookById.getOwner()); // Not to lose connection on updating book
 
         bookRepository.save(newBook);
     }
@@ -64,6 +64,7 @@ public class BookService {
         return bookRepository.findById(personId).map(Book::getOwner).orElse(null);
     }
 
+    // For giving back book to library
     @Transactional
     public void release(Integer id) {
         bookRepository.findById(id).ifPresent(book -> {
@@ -72,9 +73,10 @@ public class BookService {
         });
     }
 
+    // For taking book from library to read
     @Transactional
-    public void assign(Integer personId, Person selectedPerson) {
-        bookRepository.findById(personId).ifPresent(book -> {
+    public void assign(Integer bookId, Person selectedPerson) {
+        bookRepository.findById(bookId).ifPresent(book -> {
             book.setOwner(selectedPerson);
             book.setTakenAt(new Date());
         });
