@@ -3,7 +3,6 @@ package com.nanemo.controllers;
 import com.nanemo.entities.Book;
 import com.nanemo.services.BookService;
 import com.nanemo.services.PersonService;
-import com.nanemo.util.DateValidator;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -19,20 +18,23 @@ public class BookController {
 
     private final BookService bookService;
     private final PersonService personService;
-    private final DateValidator dateValidator;
 
     @Autowired
     public BookController(BookService bookService,
-                          PersonService personService,
-                          DateValidator dateValidator) {
+                          PersonService personService) {
         this.bookService = bookService;
         this.personService = personService;
-        this.dateValidator = dateValidator;
     }
 
     @GetMapping("/all")
-    public String getAllBooks(Model model) {
-        model.addAttribute("books", bookService.getAllBooks());
+    public String getAllBooks(Model model,
+                              @RequestParam(value = "page", required = false) Integer page,
+                              @RequestParam(value = "books_per_page", required = false) Integer booksPerPage,
+                              @RequestParam(value = "sort_by_year", required = false) Boolean sortByYear) {
+        if (page == null || booksPerPage == null)
+            model.addAttribute("books", bookService.findAll(sortByYear));
+        else model.addAttribute("books", bookService.findWithPagination(page, booksPerPage, sortByYear));
+
         return "book/book_list";
     }
 

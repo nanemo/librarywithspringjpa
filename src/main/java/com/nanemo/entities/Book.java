@@ -5,7 +5,6 @@ import lombok.*;
 
 import javax.validation.constraints.NotEmpty;
 import javax.validation.constraints.Size;
-import java.time.LocalDateTime;
 import java.util.Date;
 
 @Getter
@@ -33,7 +32,7 @@ public class Book {
 
     @ManyToOne
     @JoinColumn(name = "person_id", referencedColumnName = "person_id")
-    private Person personName;
+    private Person Owner;
 
     @Column(name = "taken_at")
     @Temporal(TemporalType.TIMESTAMP)

@@ -7,7 +7,6 @@ import org.hibernate.annotations.CascadeType;
 
 import javax.validation.constraints.NotEmpty;
 import javax.validation.constraints.Size;
-import java.time.LocalDateTime;
 import java.util.Date;
 import java.util.List;
 
@@ -33,7 +32,7 @@ public class Person {
     @Temporal(TemporalType.TIMESTAMP)
     private Date birthdate;
 
-    @OneToMany(mappedBy = "personName")
+    @OneToMany(mappedBy = "Owner")
     @Cascade({CascadeType.SAVE_UPDATE,
             CascadeType.REFRESH})
     private List<Book> bookList;
