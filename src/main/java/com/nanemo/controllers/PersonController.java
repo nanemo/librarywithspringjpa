@@ -1,6 +1,6 @@
 package com.nanemo.controllers;
 
-import com.nanemo.entity.Person;
+import com.nanemo.entities.Person;
     import com.nanemo.services.PersonService;
 import com.nanemo.util.DateValidator;
 import com.nanemo.util.PersonNameValidator;

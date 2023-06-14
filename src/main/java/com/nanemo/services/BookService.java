@@ -1,6 +1,6 @@
 package com.nanemo.services;
 
-import com.nanemo.entity.Book;
+import com.nanemo.entities.Book;
 import com.nanemo.repositories.BookRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;

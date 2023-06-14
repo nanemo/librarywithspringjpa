@@ -1,6 +1,6 @@
 package com.nanemo.controllers;
 
-import com.nanemo.entity.Book;
+import com.nanemo.entities.Book;
 import com.nanemo.services.BookService;
 import com.nanemo.services.PersonService;
 import com.nanemo.util.DateValidator;

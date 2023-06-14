@@ -1,6 +1,6 @@
 package com.nanemo.repositories.springsparepositories;
 
-import com.nanemo.entity.Person;
+import com.nanemo.entities.Person;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 
