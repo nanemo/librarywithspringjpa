@@ -1,4 +1,4 @@
-package com.nanemo.repository;
+package com.nanemo.repositories;
 
 import java.util.List;
 

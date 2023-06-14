@@ -1,6 +1,6 @@
-package com.nanemo.service.springjpaservice;
+package com.nanemo.services.springjpaservice;
 
-import com.nanemo.repository.springsparepository.BookRepositorySpringJPA;
+import com.nanemo.repositories.springsparepositories.BookRepositorySpringJPA;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 

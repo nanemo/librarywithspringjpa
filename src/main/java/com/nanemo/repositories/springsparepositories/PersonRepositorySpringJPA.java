@@ -1,4 +1,4 @@
-package com.nanemo.repository.springsparepository;
+package com.nanemo.repositories.springsparepositories;
 
 import com.nanemo.entity.Person;
 import org.springframework.data.jpa.repository.JpaRepository;
