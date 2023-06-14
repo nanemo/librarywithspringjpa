@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Free books</title>
+</head>
+<body>
+<div th:if="${free_books.isEmpty()}">
+    <h1>All books is busy</h1>
+</div>
+
+<div th:unless="${free_books.isEmpty()}">
+    <table>
+        <caption>Free books list</caption>
+        <thead>
+        <tr>
+            <th>Name</th>
+            <th>Author name</th>
+            <th>Release date</th>
+        </tr>
+        </thead>
+        <tbody>
+        <tr th:each="book : ${free_books}">
+            <td th:text="${book.bookName}"></td>
+            <td th:text="${book.authorName}"></td>
+            <td th:text="${book.getBirthday}"></td>
+
+            <td>
+                <form th:action="@{/book/add_book_to_person/{person_id}/{book_id}/(person_id=${current_person_id},
+                book_id=${book.bookId})}"
+                      th:method="POST">
+                    <button type="submit">get book for reading</button>
+                </form>
+            </td>
+        </tr>
+        </tbody>
+    </table>
+</div>
+
+<div>
+    <form th:action="@{/person/ordered_book/{person_id}/(person_id=${current_person_id})}"
+          th:method="get">
+        <button type="submit">back</button>
+    </form>
+</div>
+</body>
+</html>

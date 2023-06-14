@@ -1,0 +1,37 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+    <style>
+        form {
+            margin: auto;
+            size: auto;
+            text-align: center;
+            background-color: dimgrey;
+            cursor: pointer;
+        }
+
+        input {
+            text-align: center;
+        }
+    </style>
+</head>
+<body>
+<div>
+    <h3>Update page</h3>
+
+    <form th:action="@{/person/update/{person_id}/(person_id=${person.getPersonId()})}" th:method="POST"
+          th:object="${person}">
+        <label for="name">Enter person name:</label><br>
+        <input id="name" th:field="*{name}" type="text"><br>
+        <div style="color:red" th:if="${#fields.hasErrors('name')}" th:errors="*{name}">Name error! </div>
+        <label for="author_name">Enter birth year:</label><br>
+        <input id="author_name" th:field="*{birthday}" type="text"><br>
+        <div style="color: red" th:if="${#fields.hasErrors('birthday')}" th:errors="*{birthday}">Birth year error! </div>
+        <input type="submit" value="Save">
+    </form>
+</div>
+
+</body>
+</html>

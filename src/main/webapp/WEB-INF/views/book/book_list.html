@@ -1,0 +1,74 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+    <style> th, td {
+        text-align: center;
+        border: 1px black solid
+    }
+
+    tr:nth-child(even) {
+        background-color: #D6EEEE;
+    }
+    table{
+        margin: auto; size: auto; text-align: center;
+    }
+
+    </style>
+
+</head>
+<body>
+<div>
+    <div>
+        <table style="margin: auto; size: auto; text-align: center">
+            <caption>NN Library BOOK LIST</caption>
+            <thead>
+            <tr>
+                <th>id</th>
+                <th>name</th>
+                <th>Author name</th>
+                <th>Release date</th>
+                <th>Owner</th>
+            </tr>
+            </thead>
+            <tbody>
+            <tr th:each="book : ${books}">
+                <td th:text="${book.getBookId()}"></td>
+                <td th:text="${book.getBookName()}"></td>
+                <td th:text="${book.getAuthorName()}"></td>
+                <td th:text="${book.getBirthday()}"></td>
+                <td th:text="${book.getName()}"></td>
+                <td style="size: auto">
+                    <form th:action="@{/book/delete/{book_id}/(book_id=${book.getBookId()})}" th:method="DELETE">
+                        <button type="submit" value="DELETE">remove</button>
+                    </form>
+                </td>
+                <td style="size: auto">
+                    <form th:action="@{/book/before_update/{book_id}/(book_id=${book.getBookId()})}" th:method="GET">
+                        <button type="submit" value="UPDATE">update</button>
+                    </form>
+                </td>
+            </tr>
+            </tbody>
+        </table>
+    </div>
+    <br/>
+
+    <table>
+        <tr>
+            <td>
+                <form style="text-align: center; margin: auto; size: auto" th:action="@{/book/new}" th:method="get">
+                    <button type="submit">add new book</button>
+                </form>
+            </td>
+            <td>
+                <form style="text-align: center; margin: auto; size: auto" th:action="@{/person/all}" th:method="get">
+                    <button type="submit">go to visitor page</button>
+                </form>
+            </td>
+        </tr>
+    </table>
+</div>
+</body>
+</html>

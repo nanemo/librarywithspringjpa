@@ -1,0 +1,68 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Ordered list</title>
+    <style> th, td {
+        text-align: center;
+        border: 1px black solid
+    }
+
+    table {
+        size: auto;
+        margin: auto
+    }
+
+    tr:nth-child(even) {
+        background-color: #D6EEEE;
+    }
+    </style>
+</head>
+<body>
+<div style="margin: auto">
+    <div style="text-align: center">
+        <h3 id="reset-button">Visitor:
+            <span th:text="${person.getName()}"></span>
+        </h3>
+    </div>
+
+    <div style="margin: auto">
+        <table>
+            <caption>Book list</caption>
+            <thead>
+            <tr>
+                <th>Book name</th>
+                <th>Author name</th>
+                <th>Release date</th>
+            </tr>
+            </thead>
+            <tbody>
+            <tr th:each="book : ${person.getBookList()}">
+                <td th:text="${book.bookName}"></td>
+                <td th:text="${book.authorName}"></td>
+                <td th:text="${book.getBirthday}"></td>
+                <td>
+                    <form th:action="@{/book/delete_book_from_person_list/{person_id}/{book_id}/(person_id=${person.personId},
+                    book_id=${book.bookId})}"
+                          th:method="post">
+                        <button type="submit">give book back to library</button>
+                    </form>
+                </td>
+            </tr>
+            </tbody>
+        </table>
+    </div><br><br>
+
+    <div style="text-align: center">
+        <form th:action="@{/person/free_book/{person_id}(person_id=${person.personId})}" th:method="GET">
+            <button type="submit" value="FREE BOOK">books for reading</button>
+        </form>
+
+        <form th:action="@{/person/all}" th:method="GET">
+            <button type="submit">back</button>
+        </form>
+    </div>
+</div>
+
+</body>
+</html>
