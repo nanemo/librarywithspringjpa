@@ -1,8 +1,8 @@
-package com.nanemo.controller;
+package com.nanemo.controllers;
 
-import com.nanemo.entity.Book;
-import com.nanemo.service.BookService;
-import com.nanemo.service.PersonService;
+import com.nanemo.entities.Book;
+import com.nanemo.services.BookService;
+import com.nanemo.services.PersonService;
 import com.nanemo.util.DateValidator;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;

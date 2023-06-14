@@ -1,7 +1,7 @@
-package com.nanemo.repository;
+package com.nanemo.repositories;
 
-import com.nanemo.entity.Book;
-import com.nanemo.entity.Person;
+import com.nanemo.entities.Book;
+import com.nanemo.entities.Person;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.jdbc.core.BeanPropertyRowMapper;
 import org.springframework.jdbc.core.JdbcTemplate;

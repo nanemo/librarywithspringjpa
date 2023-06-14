@@ -1,7 +1,7 @@
 package com.nanemo.util;
 
-import com.nanemo.entity.Person;
-import com.nanemo.service.PersonService;
+import com.nanemo.entities.Person;
+import com.nanemo.services.PersonService;
 import org.springframework.stereotype.Component;
 import org.springframework.validation.Errors;
 import org.springframework.validation.Validator;

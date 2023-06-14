@@ -1,7 +1,7 @@
-package com.nanemo.controller;
+package com.nanemo.controllers;
 
-import com.nanemo.entity.Person;
-    import com.nanemo.service.PersonService;
+import com.nanemo.entities.Person;
+    import com.nanemo.services.PersonService;
 import com.nanemo.util.DateValidator;
 import com.nanemo.util.PersonNameValidator;
 import org.springframework.beans.factory.annotation.Autowired;

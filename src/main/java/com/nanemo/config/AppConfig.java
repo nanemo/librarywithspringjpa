@@ -7,8 +7,14 @@ import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.PropertySource;
 import org.springframework.core.env.Environment;
+import org.springframework.data.jpa.repository.config.EnableJpaRepositories;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.datasource.DriverManagerDataSource;
+import org.springframework.orm.jpa.JpaTransactionManager;
+import org.springframework.orm.jpa.LocalContainerEntityManagerFactoryBean;
+import org.springframework.orm.jpa.vendor.HibernateJpaVendorAdapter;
+import org.springframework.transaction.PlatformTransactionManager;
+import org.springframework.transaction.annotation.EnableTransactionManagement;
 import org.springframework.web.servlet.config.annotation.EnableWebMvc;
 import org.springframework.web.servlet.config.annotation.ViewResolverRegistry;
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
@@ -18,19 +24,22 @@ import org.thymeleaf.spring5.view.ThymeleafViewResolver;
 
 import javax.sql.DataSource;
 import java.util.Objects;
+import java.util.Properties;
 
 @Configuration
 @ComponentScan("com.nanemo")
 @EnableWebMvc
-@PropertySource("classpath:database.properties")
+@PropertySource("classpath:hibernate.properties")
+@EnableTransactionManagement
+@EnableJpaRepositories("com.nanemo.repositories")
 public class AppConfig implements WebMvcConfigurer {
     private final ApplicationContext applicationContext;
-    private final Environment environment;
+    private final Environment em;
 
     @Autowired
-    public AppConfig(ApplicationContext applicationContext, Environment environment) {
+    public AppConfig(ApplicationContext applicationContext, Environment em) {
         this.applicationContext = applicationContext;
-        this.environment = environment;
+        this.em = em;
     }
 
     @Bean
@@ -60,17 +69,41 @@ public class AppConfig implements WebMvcConfigurer {
     }
 
     @Bean
-    public JdbcTemplate jdbcTemplate() {
-        return new JdbcTemplate(dataSource());
+    public LocalContainerEntityManagerFactoryBean entityManagerFactory() {
+        final LocalContainerEntityManagerFactoryBean em = new LocalContainerEntityManagerFactoryBean();
+        em.setDataSource(dataSource());
+        em.setPackagesToScan("com.nanemo.entity");
+
+        final HibernateJpaVendorAdapter vendorAdapter = new HibernateJpaVendorAdapter();
+        em.setJpaVendorAdapter(vendorAdapter);
+        em.setJpaProperties(hibernateProperties());
+
+        return em;
     }
+
+    @Bean
+    public PlatformTransactionManager transactionManager() {
+        JpaTransactionManager transactionManager = new JpaTransactionManager();
+        transactionManager.setEntityManagerFactory(entityManagerFactory().getObject());
+        return transactionManager;
+    }
+
 
     private DataSource dataSource() {
         DriverManagerDataSource dataSource = new DriverManagerDataSource();
-        dataSource.setDriverClassName(Objects.requireNonNull(environment.getProperty("db.driver")));
-        dataSource.setUrl(environment.getProperty("db.url"));
-        dataSource.setUsername(environment.getProperty("db.username"));
-        dataSource.setPassword(environment.getProperty("db.password"));
+        dataSource.setDriverClassName(Objects.requireNonNull(em.getProperty("hibernate.driver_class")));
+        dataSource.setUrl(em.getProperty("hibernate.connection.url"));
+        dataSource.setUsername(em.getProperty("hibernate.connection.username"));
+        dataSource.setPassword(em.getProperty("hibernate.connection.password"));
 
         return dataSource;
+    }
+
+    private Properties hibernateProperties() {
+        Properties properties = new Properties();
+        properties.put("hibernate.dialect", em.getRequiredProperty("hibernate.dialect"));
+        properties.put("hibernate.show_sql", em.getRequiredProperty("hibernate.show_sql"));
+        properties.put("hibernate.hdm2ddl", em.getRequiredProperty("hibernate.hdm2ddl"));
+        return properties;
     }
 }

@@ -1,8 +1,8 @@
-package com.nanemo.service;
+package com.nanemo.services;
 
-import com.nanemo.entity.Book;
-import com.nanemo.entity.Person;
-import com.nanemo.repository.PersonRepository;
+import com.nanemo.entities.Book;
+import com.nanemo.entities.Person;
+import com.nanemo.repositories.PersonRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 

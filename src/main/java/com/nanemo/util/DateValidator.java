@@ -1,7 +1,7 @@
 package com.nanemo.util;
 
-import com.nanemo.entity.Book;
-import com.nanemo.entity.Person;
+import com.nanemo.entities.Book;
+import com.nanemo.entities.Person;
 import org.springframework.stereotype.Component;
 import org.springframework.validation.Errors;
 import org.springframework.validation.Validator;
